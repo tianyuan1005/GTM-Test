@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>练习电商网站</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .product {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      button {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>练习电商网站</h1>
+
+    <!-- 商品列表 -->
+    <div class="product" data-id="PROD001" data-price="29.9">
+      <h3>Product 1</h3>
+      <p>Price: $29.9</p>
+      <button class="addCartBtn">Add to Cart</button>
+    </div>
+
+    <div class="product" data-id="PROD002" data-price="49.9">
+      <h3>Product 2</h3>
+      <p>Price: $49.9</p>
+      <button class="addCartBtn">Add to Cart</button>
+    </div>
+
+    <div class="product" data-id="PROD003" data-price="19.9">
+      <h3>Product 3</h3>
+      <p>Price: $19.9</p>
+      <button class="addCartBtn">Add to Cart</button>
+    </div>
+
+    <!-- 购物车 -->
+    <h2>Cart</h2>
+    <ul id="cartList"></ul>
+    <p>Total: $<span id="cartTotal">0.00</span></p>
+    <button id="checkoutBtn">Checkout</button>
+
+    <script>
+      window.cart = []
+
+      function updateCartUI() {
+        const cartList = document.getElementById('cartList')
+        const cartTotal = document.getElementById('cartTotal')
+        cartList.innerHTML = ''
+        let total = 0
+        window.cart.forEach((item) => {
+          const li = document.createElement('li')
+          li.textContent = item.name + ' - $' + item.price
+          cartList.appendChild(li)
+          total += parseFloat(item.price)
+        })
+        cartTotal.textContent = total.toFixed(2)
+      }
+
+      // 添加商品到购物车
+      const addButtons = document.querySelectorAll('.addCartBtn')
+      addButtons.forEach((btn) => {
+        btn.addEventListener('click', function () {
+          const productDiv = this.parentElement
+          const product = {
+            id: productDiv.dataset.id,
+            name: productDiv.querySelector('h3').innerText,
+            price: productDiv.dataset.price,
+          }
+          window.cart.push(product)
+          updateCartUI()
+          alert(product.name + ' added to cart!')
+        })
+      })
+
+      // 模拟结账事件
+      document
+        .getElementById('checkoutBtn')
+        .addEventListener('click', function () {
+          if (window.cart.length === 0) {
+            alert('Cart is empty!')
+            return
+          }
+          const total = window.cart.reduce(
+            (sum, item) => sum + parseFloat(item.price),
+            0
+          )
+          alert('Checkout complete! Total: $' + total.toFixed(2))
+          // 这里可以在 GTM 中捕获 checkout 事件，通过 Custom JS Variable 或 Click Trigger
+          window.cart = []
+          updateCartUI()
+        })
+    </script>
+  </body>
+</html>
